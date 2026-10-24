@@ -1,0 +1,160 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Authenticated user profile in ADOSX BulkBuy",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "format": "email", "maxLength": 150 },
+        "role": { "type": "string", "enum": ["admin", "garage"] },
+        "garageId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["uid", "name", "email", "role"]
+    },
+    "Garage": {
+      "title": "Garage",
+      "description": "Registered automotive repair shop or service garage",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 150 },
+        "ownerUid": { "type": "string", "maxLength": 128 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "address": { "type": "string", "maxLength": 300 },
+        "city": { "type": "string", "maxLength": 100 },
+        "gstNumber": { "type": "string", "maxLength": 50 },
+        "status": { "type": "string", "enum": ["active", "suspended"] },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["name", "ownerUid", "phone", "address", "city", "status"]
+    },
+    "Supplier": {
+      "title": "Supplier",
+      "description": "OEM or OES automotive spare parts supplier",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 150 },
+        "email": { "type": "string", "format": "email", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "address": { "type": "string", "maxLength": 300 },
+        "status": { "type": "string", "enum": ["active", "inactive"] }
+      },
+      "required": ["name", "email", "phone", "status"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Spare part catalog item with vehicle compatibility",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 200 },
+        "sku": { "type": "string", "maxLength": 64 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "category": { "type": "string", "maxLength": 100 },
+        "vehicleCompatibility": { "type": "string", "maxLength": 500 },
+        "referencePricePaise": { "type": "integer" },
+        "supplierId": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["active", "discontinued"] }
+      },
+      "required": ["name", "sku", "vehicleCompatibility", "referencePricePaise", "supplierId", "status"]
+    },
+    "Pool": {
+      "title": "Pool",
+      "description": "Demand aggregation pool for a specific spare part SKU",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "productId": { "type": "string", "maxLength": 128 },
+        "supplierId": { "type": "string", "maxLength": 128 },
+        "pricingPolicy": { "type": "string", "enum": ["pool_wide", "marginal"] },
+        "minimumQuantity": { "type": "integer" },
+        "targetQuantity": { "type": "integer" },
+        "committedQuantity": { "type": "integer" },
+        "cutoffAt": { "type": "string", "maxLength": 50 },
+        "status": { "type": "string", "enum": ["open", "closed", "finalized", "cancelled"] },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "finalPricePaise": { "type": "integer" },
+        "createdAt": { "type": "string", "maxLength": 50 },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["productId", "supplierId", "pricingPolicy", "minimumQuantity", "committedQuantity", "cutoffAt", "status", "createdBy"]
+    },
+    "Commitment": {
+      "title": "Commitment",
+      "description": "Quantity committed by a garage to a demand pool",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "poolId": { "type": "string", "maxLength": 128 },
+        "garageId": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "quantity": { "type": "integer" },
+        "status": { "type": "string", "enum": ["active", "withdrawn"] },
+        "estimatedUnitPricePaise": { "type": "integer" },
+        "finalUnitPricePaise": { "type": "integer" },
+        "createdAt": { "type": "string", "maxLength": 50 },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["poolId", "garageId", "userId", "quantity", "status"]
+    },
+    "PurchaseOrder": {
+      "title": "PurchaseOrder",
+      "description": "Supplier purchase order generated upon pool finalization",
+      "type": "object",
+      "properties": {
+        "poNumber": { "type": "string", "maxLength": 64 },
+        "poolId": { "type": "string", "maxLength": 128 },
+        "supplierId": { "type": "string", "maxLength": 128 },
+        "productSku": { "type": "string", "maxLength": 64 },
+        "productName": { "type": "string", "maxLength": 200 },
+        "aggregateQuantity": { "type": "integer" },
+        "applicableUnitPricePaise": { "type": "integer" },
+        "totalAmountPaise": { "type": "integer" },
+        "currency": { "type": "string", "enum": ["INR"] },
+        "status": { "type": "string", "enum": ["draft", "issued", "supplier_confirmed", "fulfilled", "cancelled"] },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "maxLength": 50 },
+        "supplierConfirmedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["poNumber", "poolId", "supplierId", "aggregateQuantity", "applicableUnitPricePaise", "totalAmountPaise", "currency", "status", "createdBy"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User account profiles"
+    },
+    "/admins/{userId}": {
+      "schema": "User",
+      "description": "Admin access markers"
+    },
+    "/garages/{garageId}": {
+      "schema": "Garage",
+      "description": "Registered garage entities"
+    },
+    "/suppliers/{supplierId}": {
+      "schema": "Supplier",
+      "description": "Spare parts suppliers"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Automotive spare parts catalog"
+    },
+    "/pools/{poolId}": {
+      "schema": "Pool",
+      "description": "Active and past demand pools"
+    },
+    "/commitments/{commitmentId}": {
+      "schema": "Commitment",
+      "description": "Garage commitments to pools"
+    },
+    "/purchaseOrders/{purchaseOrderId}": {
+      "schema": "PurchaseOrder",
+      "description": "Persisted supplier purchase orders"
+    }
+  }
+}

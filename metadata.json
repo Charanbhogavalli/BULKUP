@@ -1,0 +1,7 @@
+{
+  "name": "ADOSX BulkBuy",
+  "description": "B2B group-buying procurement platform aggregating demand across automobile garages for wholesale spare-parts volume discounts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
